@@ -4,41 +4,32 @@ clear all
 dbstop if error % optional instruction to stop at a breakpoint if there is an error - useful for debugging
 %% SET DIRECTORIES
 %For toolboxes 
-scripts_path='Y:\Uncertainty\Scripts'; %Barbara general path where I store scripts
-eeglab_path = 'Y:\Uncertainty\Scripts\eeglab2022.0' ;  %Barbara EEGLAB path
-fieldtrip_path= 'Y:\Uncertainty\Scripts\fieldtrip-20220104\fieldtrip-20220104' ; %Barbara fieldtrip path
-data_path = 'Y:\Uncertainty\EEG analysis\Preprocessed\Continuous1'; %Barbara The path to the data you want to extract the power from.
+scripts_path='Y:\Uncertainty\Scripts'; % general path where I store scripts
+eeglab_path = 'Y:\Uncertainty\Scripts\eeglab2022.0' ;  % EEGLAB path
+fieldtrip_path= 'Y:\Uncertainty\Scripts\fieldtrip-20220104\fieldtrip-20220104' ; % fieldtrip path
+data_path = 'Y:\Uncertainty\EEG analysis\Preprocessed\Continuous1'; % The path to the data you want to extract the power from.
 
 addpath(scripts_path);
 addpath(eeglab_path);
 addpath(fieldtrip_path);
 
-%Barbara change it to select your conditions
+%Change it to select your conditions
 %Select the data that you want to preprocess. 
 power=struct;% clears the field
-power.excludeparticipant = {}; %Participants to be excluded. If there is none put a number above the sample size.
-power.condition = {'T'};%Conditions to be included
-power.extension =  {'set'}; %Type of data (brainvision)
+%%power.excludeparticipant = {}; %Participants to be excluded. If there is none put a number above the sample size.
+
 
 %%Potential improvement - I can probably do this much simpler adding an &
 %%but it seems to not be possible with this type of data or maybe I have
 %%not used the right syntax. For now this rudementary and bulky way of
 %%doing it works. 
-
-filelist0=dir (data_path);
-filelist1= (string({filelist0.name}))';
-filelist2=contains (filelist1, power.extension);
-filelist3=filelist1(filelist2);
-filelist4=contains(filelist3, power.condition);
-filelist5=filelist3(filelist4);
-filelist6= ~contains (filelist5, power.excludeparticipant);
-filelist= filelist5(filelist6);
+filelist=pickfilelistADS(data_path, 'set')
 if isempty(filelist)
     error('No files found for power analysis!\n');
 end
 %% Set data options to extract frequencies
 
-%%Barbara If you want to get these frequencies write 1 next to it, if you don´t
+%% If you want to get these frequencies write 1 next to it, if you don´t
 %%want it write 0
 delta =1;
 theta =1;
@@ -46,8 +37,8 @@ alpha =1;
 beta = 1;
 gamma= 1;
 
-selectedchannels={'all'};%Barbara change this if you want to select specific channels
-channme='allchanels';%Barbara this is what will appear in the name of the excel sheet saved. 
+selectedchannels={'all'};% change this if you want to select specific channels
+channme='allchanels';% this is what will appear in the name of the excel sheet saved. 
     %It is to mark whether it is a doc with all the channels or only some.
     %This way you can run the same script several times selecting different
     %channels and you will not overwrite the output files. If you want to
